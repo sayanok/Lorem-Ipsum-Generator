@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { LoremIpsum } from "lorem-ipsum";
 
-function App() {
+const App: React.FC = () => {
+  const [numberOfParagraphs, setNumberOfParagraphs] = useState<number>(1);
+  const [generatedText, setGeneratedText] = useState("");
+  const lorem = new LoremIpsum({});
+
+  function generateText() {
+    let generated;
+    if (!numberOfParagraphs) {
+      generated = lorem.generateParagraphs(1);
+    } else {
+      generated = lorem.generateParagraphs(numberOfParagraphs);
+    }
+    setGeneratedText(generated);
+  }
+
+  function copyText() {
+    const copyText = document.getElementById("textBox")?.innerHTML;
+    if (copyText) {
+      navigator.clipboard.writeText(copyText);
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <p>
+        段落を入力してください:
+        <input
+          type={"number"}
+          min="1"
+          onChange={(e) => setNumberOfParagraphs(e.target.valueAsNumber)}
+          value={numberOfParagraphs}
+        ></input>
+      </p>
+      <button onClick={() => generateText()}>テキスト生成</button>
+      <div id="textBox" className="textBox" style={{ whiteSpace: "pre-line" }}>
+        {generatedText}
+      </div>
+      <button id="copy" onClick={() => copyText()}>
+        生成されたテキストをコピーする
+      </button>
+    </>
   );
-}
+};
 
 export default App;
